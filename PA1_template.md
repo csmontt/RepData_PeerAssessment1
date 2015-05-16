@@ -30,15 +30,44 @@ The dataset is stored in a comma-separated-value (CSV) file and there are a tota
 
 * Load the data
 * Process/transform the data (if necessary) into a format suitable for your analysis
-```{r label = "Load necessary libraries", message =FALSE, warnings = FALSE}
+
+```r
 # I set the working directory to the location where the data was unzipped and loaded the neccessary packages to perform the analysis.
 library(lubridate)
+```
+
+```
+## Warning: package 'lubridate' was built under R version 3.1.3
+```
+
+```r
 library(dplyr)
+```
+
+```
+## Warning: package 'dplyr' was built under R version 3.1.2
+```
+
+```r
 library(lattice)
 ```
-```{r label = "Load Data"}
+
+```r
 activity <- read.csv(unz("activity.zip", "activity.csv"), header = TRUE)
 head(activity)
+```
+
+```
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
+## 6    NA 2012-10-01       25
+```
+
+```r
 # transform data into a format compatible with the dply package.
 act <- tbl_df(activity) 
 ```
@@ -49,7 +78,8 @@ act <- tbl_df(activity)
 For this part of the assignment, you can ignore the missing values in the dataset.
 
 * Make a histogram of the total number of steps taken each day.
-```{r label = "Histogram total number of steps per day"}
+
+```r
 # I filtered out every row with NAs.
 act2 <- filter(act, !is.na(steps)) 
 # First I group the data by date, so every operation I make with 
@@ -60,14 +90,27 @@ by_date <- group_by(act2, date = date)
 step_per_day <- summarize(by_date, steps_day = sum(steps))
 # histogram for the total number of steps per day
 hist(step_per_day$steps_day, breaks = 20, main = 'Histogram of the total number of steps taken each day', xlab = 'Steps per Day')
-
 ```
+
+![plot of chunk Histogram total number of steps per day](figure/Histogram total number of steps per day-1.png) 
 
 * Calculate and report the mean and median total number of steps taken per day
 
-```{r label = "Mean and Median"}
+
+```r
 mean(step_per_day$steps_day)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(step_per_day$steps_day)
+```
+
+```
+## [1] 10765
 ```
 
 
@@ -75,20 +118,45 @@ median(step_per_day$steps_day)
 
 * Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-```{r label = "Times Series Plot, average steps per interval across all days"}
+
+```r
 # First I group the data by interval for then calculating the average number of steps per interval acrross every day.
 by_interval <- group_by(act2, interval = interval)
 m_steps_int <- summarize(by_interval, mean_steps_int = mean(steps))
 xyplot(m_steps_int$mean_steps_int~m_steps_int$interval, type = "l", main = "Average number of steps per interval", xlab = "Interval", ylab = "Number of Steps", grid = TRUE)
 ```
 
+![plot of chunk Times Series Plot, average steps per interval across all days](figure/Times Series Plot, average steps per interval across all days-1.png) 
+
 
 * Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-```{r label = "Max Steps"}
+
+```r
 max(m_steps_int[,2])
+```
+
+```
+## [1] 206.1698
+```
+
+```r
 filter(m_steps_int, mean_steps_int > 206)
+```
+
+```
+## Source: local data frame [1 x 2]
+## 
+##   interval mean_steps_int
+## 1      835       206.1698
+```
+
+```r
 which(m_steps_int$interval == 835)
+```
+
+```
+## [1] 104
 ```
 
 The 104th interval correspondng to 8:35 am is the interval with the larger average of steps across all days: 206.1698 steps on average.
@@ -100,8 +168,13 @@ Note that there are a number of days/intervals where there are missing values (c
 
 * Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 
-```{r label = "Total Missing Values"}
+
+```r
 (mv <- sum(is.na(act$steps))) 
+```
+
+```
+## [1] 2304
 ```
 2304 is the total number of intervals with missing values.
 
@@ -110,7 +183,8 @@ Note that there are a number of days/intervals where there are missing values (c
 I filled the missing values with the mean for that 5-minute interval.
 
 * Create a new dataset that is equal to the original dataset but with the missing data filled in.
-```{r label = "New Dataset With Imputed Missing Values"}
+
+```r
 # I extracted the mean steps per interval 
 # from the m-steps_int  dataframe.
 ms_int <- m_steps_int[[2]] 
@@ -120,21 +194,50 @@ act3 <- cbind(act,ms_int)
 act3$steps[is.na(act3$steps)] <- act3$ms_int 
 ```
 
+```
+## Warning in act3$steps[is.na(act3$steps)] <- act3$ms_int: number of items
+## to replace is not a multiple of replacement length
+```
+
 * Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
-```{r label = "Histogram With Imputed Data"}
+
+```r
 by_date2 <- group_by(act3, date = date)
 step_per_day2 <- summarize(by_date2, steps_day = sum(steps))
 hist(step_per_day2$steps_day, breaks = 20, main = 'Histogram of the total number of steps taken each day', xlab = 'Steps per Day')
+```
+
+![plot of chunk Histogram With Imputed Data](figure/Histogram With Imputed Data-1.png) 
+
+```r
 mean(step_per_day2$steps_day)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(step_per_day2$steps_day)
 ```
 
+```
+## [1] 10766.19
+```
+
 There are a few difference between this data, with imputed missing values, and the previous data that omitted them. First, now we have 61 days instead of 53 because there are no longer NAs. To understand how the imputed missing values may bias the dataset is important to know how this missing values are distributed within different days.
-```{r label = " Distribution Missing Vakues"}
+
+```r
 by_date3 <- group_by(act, date = date)
 na_per_day3 <- summarize(by_date3, na_day = sum(is.na(steps)))
 table(na_per_day3$na_day)
+```
+
+```
+## 
+##   0 288 
+##  53   8
 ```
 We can see there are days for which there is missing data for every interval (8 days in total with 288 NAs each). All of other days  have complete data. Therefore, those 8 days have the same statistics (same mean, median, etc.)
 
@@ -146,7 +249,8 @@ For this part the weekdays() function may be of some help here. Use the dataset 
 
 * Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
-```{r label "Creating new factor variable Weekend"}
+
+```r
 act3$date <- as.Date(act3$date)
 # label TRUE so the  
 # name of the day is shown instead of a number representing it
@@ -164,7 +268,8 @@ day_of_week <- select(day_of_week, date, interval, steps, weekend)
 
 Instead of using the original format of the interval variable I used the number of the interval as the interval value (first interval = 1, 2nd interval = 2 and so on until 288.)
 
-```{r, label = "Changing interval values"}
+
+```r
 wd.wk <- group_by(day_of_week, weekend, interval)
 new_int  <- mutate(wd.wk, ones = 1)
 new_int  <- group_by(new_int, date)
@@ -174,12 +279,15 @@ new_int <- select(new_int, nth, steps, weekend)
 
 Then I perform the neccessary steps for creating the plot with this new variable.
 
-```{r, label = 'Make Time Series Plot Weekend'}
+
+```r
 wd.wk2 <- group_by(new_int, weekend, nth)
 avg.steps2 <- summarize(wd.wk2, mean_steps= mean(steps) )
 xyplot(mean_steps~nth | weekend , data = avg.steps2,
           main="Average steps per interval",
    xlab="Interval", ylab = "Average steps", type = "l", layout=c(1, 2), grid = TRUE)
 ```
+
+![plot of chunk Make Time Series Plot Weekend](figure/Make Time Series Plot Weekend-1.png) 
 
 As you can see, the lines connecting the dot looks a little bit smoother. We can also see that during the weekend activity is spread more evenly than during the week. 
