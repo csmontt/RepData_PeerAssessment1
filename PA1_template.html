@@ -236,18 +236,8 @@ hr {
 
 <pre><code class="r"># I set the working directory to the location where the data was unzipped and loaded the neccessary packages to perform the analysis.
 library(lubridate)
-</code></pre>
-
-<pre><code>## Warning: package &#39;lubridate&#39; was built under R version 3.1.3
-</code></pre>
-
-<pre><code class="r">library(dplyr)
-</code></pre>
-
-<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 3.1.2
-</code></pre>
-
-<pre><code class="r">library(lattice)
+library(dplyr)
+library(lattice)
 </code></pre>
 
 <pre><code class="r">activity &lt;- read.csv(unz(&quot;activity.zip&quot;, &quot;activity.csv&quot;), header = TRUE)
@@ -447,7 +437,7 @@ day_of_week &lt;- select(day_of_week, date, interval, steps, weekend)
 <li>Make a panel plot containing a time series plot (i.e. type = &ldquo;l&rdquo;) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the following, which was created using simulated data:</li>
 </ul>
 
-<h4>Smothing the line in the time series plot.</h4>
+<h4>Smoothing the line in the time series plot.</h4>
 
 <p>Instead of using the original format of the interval variable I used the number of the interval as the interval value (first interval = 1, 2nd interval = 2 and so on until 288.)</p>
 

@@ -34,21 +34,7 @@ The dataset is stored in a comma-separated-value (CSV) file and there are a tota
 ```r
 # I set the working directory to the location where the data was unzipped and loaded the neccessary packages to perform the analysis.
 library(lubridate)
-```
-
-```
-## Warning: package 'lubridate' was built under R version 3.1.3
-```
-
-```r
 library(dplyr)
-```
-
-```
-## Warning: package 'dplyr' was built under R version 3.1.2
-```
-
-```r
 library(lattice)
 ```
 
@@ -264,7 +250,7 @@ day_of_week <- select(day_of_week, date, interval, steps, weekend)
 
 * Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the following, which was created using simulated data:
 
-#### Smothing the line in the time series plot.
+#### Smoothing the line in the time series plot.
 
 Instead of using the original format of the interval variable I used the number of the interval as the interval value (first interval = 1, 2nd interval = 2 and so on until 288.)
 
